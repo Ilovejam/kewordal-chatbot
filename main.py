@@ -1,13 +1,11 @@
 from operator import index
+from flask import Flask
+from flask_restful import reqparse, abort, Api, Resource
+from micro_service_chatbot import MicroServiceChatbot
 
+app = Flask(__name__)
+api = Api(app)
+api.add_resource(MicroServiceChatbot, '/')
 
-print("hello")
-question_list = ["How are you doing?"]
-answer_list = ["I am good"]
-
-query = input("You: ")
-if query in question_list:
-    print(answer_list[question_list.index(query)])
-
-else:
-    print("NO!!")
+if __name__ == '__main__':
+    app.run(debug=True)
