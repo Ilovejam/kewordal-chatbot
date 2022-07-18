@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_restful import reqparse, abort, Api, Resource
-
+import requests
 
 class MicroServiceChatbot(Resource):
     access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJuYmYiOjE2MzMwOTAyNjIsImV4cCI6MTY5NjE2MjI2MiwiaWF0IjoxNjMzMDkwMjYyfQ.VIuUiGRjO7VrUmImKeXG7dFBp8GMcQzUUE-Eo405YOM"
@@ -35,12 +35,20 @@ class MicroServiceChatbot(Resource):
         }
 
     def chatbot_connector(self,question):
-        question_list = ["How are you doing?"]
-        answer_list = ["I am good"]
+        url = f"https://kewordal-backend.herokuapp.com/answers/getByQuestion?question={question}"
+        headers = {
+            "Authorization" : self.access_token,
+            "Content-Type": "application/json"
+        }
+        response = requests.get(url=url,headers=headers)
+        response = response.json()
+        status = response["data"]["status"]
+        answer = response["data"]["answer"]
 
-        query = question
-        if query in question_list:
-            return answer_list[question_list.index(query)]
+        if status == "No":
+            #TODO: there is no question like this in microservice. Search another place.
+            print(status)
+            return answer
 
-        else:
-            return "NO!!"
+        print(status)
+        return answer
